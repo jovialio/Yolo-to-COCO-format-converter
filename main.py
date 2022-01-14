@@ -17,14 +17,7 @@ import numpy as np
 
 YOLO_DARKNET_SUB_DIR = "YOLO_darknet"
 
-classes = [
-    "chair",
-    "handle",
-    "table",
-    "button",
-    "person",
-]
-
+classes = []
 
 def get_images_info_and_annotations(opt):
     path = Path(opt.path)
@@ -44,7 +37,7 @@ def get_images_info_and_annotations(opt):
         # Check how many items have progressed
         if image_id % 1000 == 0:
             print("Processing " + str(image_id) + " ...")
-
+        
         img_file = cv2.imread(str(file_path))
         h, w, _ = img_file.shape
         image_annotation = create_image_annotation(
@@ -184,7 +177,7 @@ def get_args():
         "--output",
         default="train_coco.json",
         type=str,
-        help="Name the output json file",
+        help="Name the output json file path",
     )
     parser.add_argument(
         "--yolo-subdir",
@@ -197,13 +190,24 @@ def get_args():
         help="Coco segmentation will be populated with a polygon "
         "that matches replicates the bounding box data.",
     )
+    parser.add_argument(
+        "--names",
+        required=True,
+        type=str,
+        help="Name of names file",
+    )
     args = parser.parse_args()
     return args
 
 
 def main(opt):
     output_name = opt.output
-    output_path = "output/" + output_name
+    output_path = output_name
+
+    # Update global classes
+    global classes
+    with open(opt.names, 'r') as f:
+        classes = [line.strip() for line in f]
 
     print("Start!")
 
