@@ -59,7 +59,13 @@ def get_images_info_and_annotations(opt):
 
         # yolo format - (class_id, x_center, y_center, width, height)
         # coco format - (annotation_id, x_upper_left, y_upper_left, width, height)
+        # print(file_path)
         for line1 in label_read_line:
+            
+            # Skip over empty lines
+            if line1 in ['\n', '\r\n']:
+                continue
+
             label_line = line1
             category_id = (
                 int(label_line.split()[0]) + 1
